@@ -1,0 +1,48 @@
+{
+  "name": "kathore/lara-formik",
+  "description": "description",
+  "type": "library",
+  "license": "MIT",
+  "version": "1.0.9",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "Kathore\\LaraFormik\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Kathore\\LaraFormik\\": "src/"
+    },
+    "files": [
+      "src/helpers.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "bharat kathore",
+      "email": "bharatkathore399@gmail.com"
+    }
+  ],
+  "require": {
+    "php": "^7.3|~8.0.0|~8.1.0|~8.2.0|~8.3.0",
+    "laravel/framework": "^8.74|^9.0|^10.0|^11.0"
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/bharatkathorer/lara-formik"
+    }
+  ],
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Kathore\\LaraFormik\\Providers\\LaraFormikServiceProvider"
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer components {
+    .primary {
+        @apply
+        text-white bg-primary  hover:bg-primary-hover focus:bg-primary-focus active:bg-primary-active  focus:ring-primary-focus  disabled:bg-primary-disable;
+    }
+
+    .secondary {
+        @apply
+        text-dark-light bg-secondary  hover:bg-secondary-hover focus:bg-secondary-focus active:bg-secondary-active  focus:ring-secondary-focus  disabled:bg-secondary-disable;
+    }
+
+    .success {
+        @apply
+        text-white bg-success  hover:bg-success-hover focus:bg-success-focus active:bg-success-active  focus:ring-success-focus  disabled:bg-success-disable;
+    }
+
+    .warning {
+        @apply
+        text-white bg-warning  hover:bg-warning-hover focus:bg-warning-focus active:bg-warning-active  focus:ring-warning-focus  disabled:bg-warning-disable;
+    }
+
+    .danger {
+        @apply
+        text-white bg-danger  hover:bg-danger-hover focus:bg-danger-focus active:bg-danger-active  focus:ring-danger-focus  disabled:bg-danger-disable;
+    }
+
+    .info {
+        @apply
+        text-white bg-info  hover:bg-info-hover focus:bg-info-focus active:bg-info-active  focus:ring-info-focus  disabled:bg-info-disable;
+    }
+
+    .light {
+        @apply
+        text-dark-light bg-light-light  hover:bg-light-hover focus:bg-light-focus active:bg-light-active  focus:ring-light-focus  disabled:bg-light-disable;
+    }
+
+    .dark {
+        @apply
+        text-white bg-dark  hover:bg-dark-hover focus:bg-dark-focus active:bg-dark-active  focus:ring-dark-focus  disabled:bg-dark-disable;
+    }
+
+    .default {
+        @apply
+        text-white bg-gray-800  hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:ring-indigo-500;
+    }
+
+    .btn {
+        @apply inline-flex gap-2 items-center px-4 py-2  border border-transparent justify-center cursor-pointer rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in-out duration-150 disabled:cursor-not-allowed
+    }
+
+    /* Custom CSS Block - LaraFormik */ /* This is the marker to indicate the custom CSS has been added */
+}
