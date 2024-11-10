@@ -231,7 +231,7 @@ onMounted(() => {
 const handleSearch = _lodash.debounce(function () {
 
     const query = makeParameter("keyword", searchKeyword.value);
-    router.visit(`${props.searchLink}${query}`, {
+    router.visit(`${(props.searchLink || props.searchLink === '/') ? window.location.pathname : props.searchLink}${query}`, {
         preserveScroll: true
     });
 }, 500);

@@ -1,7 +1,7 @@
 <template>
     <teleport to="body">
         <TransitionRoot appear :show="model" as="template">
-            <Dialog as="div" @close="closeModal" class="relative z-10">
+            <Dialog as="div" @close="closeModal" class="relative z-50">
                 <TransitionChild
                     as="template"
                     enter="duration-300 ease-out"
