@@ -182,10 +182,6 @@ class InstallLaraFormik extends Command
 
                     // Write the modified content back to the file
                     file_put_contents($filePath, $modifiedContent);
-
-                    echo "Text successfully added to the file!";
-                } else {
-                    echo "Could not find the 'return [' position in the file.";
                 }
             }
         } else {
