@@ -1,4 +1,4 @@
-# Notification for Laravel + Inertia + Vue js
+#Form & Notification for Laravel + Inertia + Vue js
 
 This package provide integration easily make design & functionality
 
@@ -226,6 +226,13 @@ theme: {
     } ,
 } ,
 ```
+## Example of components
+
+All example files auto created. </br>
+Please visit this route: /lara-formik </br>To get sample page.
+
+That's it Done configuration now enjoy the package.</br></br></br>
+
 
 its already register if not present then add </br>
  this line ...ToastNotification::init() </br>
@@ -301,13 +308,6 @@ class TestController extends Controller
     }
 }
 ```
-
-## Example of components
-
-All example files auto created. </br>
-Please visit this route: /lara-formik </br>To get sample page.
-
-That's it Done configuration now enjoy the package.
 
 ## This is code are added. in sample route /lara-formik
 
