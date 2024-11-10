@@ -50,7 +50,7 @@
   </div>
   <div class="px-10 mt-4 ">
     <TabComponent :options="tabs"></TabComponent>
-    <!--        <RichTextArea/>-->
+    <RichTextArea v-model="form.name"/>
   </div>
   <ModalComponent
       title="sample"
@@ -77,6 +77,7 @@ import ToastNotification from "@/LaraFormik/Notification/ToastNotification.vue";
 import SideBarComponent from "@/LaraFormik/Other/SideBarComponent.vue";
 import TabComponent from "@/LaraFormik/Other/TabComponent.vue";
 import FormAction from "@/LaraFormik/Form/FormAction.vue";
+import RichTextArea from "@/LaraFormik/Form/RichTextArea.vue";
 
 const users = computed(() => usePage().props.users);
 const form = useForm({
@@ -97,10 +98,6 @@ const fields = [
 const tabs = [
   {key: 'customer', label: 'Customer',},
   {key: 'admin', label: 'Admin',},
-  {key: 'new', label: 'Latest',},
-  {key: 'st', label: 'bharat',},
-  {key: 'dk', label: 'Kathore',},
-  {key: 'user', label: 'User', href: '/'},
 ];
 
 const genderOptions = [

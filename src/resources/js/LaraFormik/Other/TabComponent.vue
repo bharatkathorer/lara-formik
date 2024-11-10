@@ -90,7 +90,7 @@ const handleTab = (item) => {
     model.value = item.key;
     loading.value = true;
     const params = makeParameter(tabKey, null, false);
-    router.visit(`${item.href ?? '/'}?${tabKey}=${item.key}&${params}`, {
+    router.visit(`${item.href ?? window.location.pathname}?${tabKey}=${item.key}&${params}`, {
         preserveScroll: true,
         preserveState,
     });
