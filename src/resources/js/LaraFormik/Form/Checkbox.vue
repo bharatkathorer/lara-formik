@@ -1,51 +1,37 @@
-<template>
-    <div>
-        <InputLabel class="w-full " v-if="label" :value="label"/>
-        <div class="flex gap-4 flex-wrap mt-1">
-            <div v-for="(option,index) in options" :key="index" class="flex items-center gap-2">
-                <Checkbox/>
-                <input
-                    type="checkbox"
-                    :id="`id_${option}_${idKey}_${index}`"
-                    :value="option"
-                    v-model="model"
-                    :class="colors.active"
-                    class="rounded  shadow-sm cursor-pointer"
-                />
-                <InputLabel class="cursor-pointer" :for="`id_${option}_${idKey}_${index}`" v-if="option"
-                            :value="option"></InputLabel>
-            </div>
-        </div>
-        <InputError :message="error"/>
-    </div>
-</template>
 <script setup>
-import InputLabel from "@/LaraFormik/Form/InputLabel.vue";
-import InputError from "@/LaraFormik/Form/InputError.vue";
-import {computed} from "vue";
-import Checkbox from "@/LaraFormik/Form/Checkbox.vue";
+import {computed} from 'vue';
 
-const model = defineModel({
-    type: [Object],
-    required: false,
-    default: [],
-});
+const emit = defineEmits(['update:checked']);
 
 const props = defineProps({
-    options: {
-        type: Object,
-        default: []
+    checked: {
+        type: [Array, Boolean],
+        required: false,
     },
-    label: String,
-    error: String,
-    idKey: String,
+    value: {
+        type: [String, Number],
+        default: null,
+    },
     mode: {
         type: String,
         default: 'dark'
     }
 });
 
+const proxyChecked = computed({
+    get() {
+        return props.checked;
+    },
 
+    set(val) {
+        emit('update:checked', val);
+    },
+});
+
+const model = defineModel({
+    type: [String, Number, Object, Array],
+    required: false,
+});
 const colors = computed(() => {
     switch (props.mode) {
         case "primary":
@@ -86,3 +72,16 @@ const colors = computed(() => {
     }
 })
 </script>
+
+<template>
+    <input
+        :checked="proxyChecked"
+        class="rounded  shadow-sm" :class="colors.active"
+        type="checkbox" v-model="model" :value="value"/>
+    <!--    <input-->
+    <!--        type="checkbox"-->
+    <!--        :value="value"-->
+    <!--        v-model="proxyChecked"-->
+    <!--        class="rounded  shadow-sm" :class="colors.active"-->
+    <!--    />-->
+</template>
