@@ -33,6 +33,8 @@
 import Multiselect from '@vueform/multiselect';
 import InputLabel from "@/LaraFormik/Form/InputLabel.vue";
 import InputError from "@/LaraFormik/Form/InputError.vue";
+import {tailwindColors} from "@/LaraFormik/Form/utils.js";
+import {onBeforeMount, onMounted} from "vue";
 
 const props = defineProps({
     label: String,
@@ -89,7 +91,10 @@ const props = defineProps({
         type: [Object, Array],
         default: []
     },
-
+    colorMode: {
+        type: String,
+        default: 'dark'
+    }
 
 })
 const model = defineModel({
@@ -97,31 +102,76 @@ const model = defineModel({
     required: true,
 });
 const emit = defineEmits(['change']);
-</script>
+onBeforeMount(() => {
+    injectDynamicTailwindStyles()
+})
+const injectDynamicTailwindStyles = () => {
+    // Dynamically create a <style> tag based on the color prop
+    const styles = `
+        /* Multiselect Option Hover */
+        .multiselect-option:hover, .multiselect-option.is-pointed:hover {
+          color: white !important;
+          background: ${tailwindColors?.[props.colorMode]?.hover}; /* Dynamic color for hover */
+        }
 
+        /* Multiselect Tag */
+        .multiselect-tag {
+          background: ${tailwindColors?.[props.colorMode]?.DEFAULT} !important; /* Dynamic tag background */
+        }
+
+        /* Multiselect Option Selected */
+        .multiselect-option.is-selected.is-pointed,
+        .multiselect-option.is-selected {
+          color: white !important;
+          background: ${tailwindColors?.[props.colorMode]?.DEFAULT}; /* Dynamic background for selected option */
+        }
+
+        /* Multiselect Active */
+        .multiselect.is-active {
+          box-shadow: none;
+          border: 1px solid ${tailwindColors?.[props.colorMode]?.DEFAULT}; /* Dynamic border color */
+          outline: 1px solid ${tailwindColors?.[props.colorMode]?.DEFAULT} !important;
+        }
+
+        /* Multiselect Normal */
+        .multiselect {
+          box-shadow: none;
+          border: 1px solid rgb(78, 77, 77);
+        }
+
+        /* Multiselect Dropdown */
+        .multiselect-dropdown {
+          border-top: 2px solid white !important;
+          border: 2px solid ${tailwindColors?.[props.colorMode]?.DEFAULT}; /* Dynamic dropdown border */
+          overflow: hidden;
+        }
+      `;
+    // Create a <style> tag and inject it into the <head>
+    const styleTag = document.createElement('style');
+    styleTag.type = 'text/css';
+    styleTag.innerHTML = styles;
+
+    // If there's already a style tag with this ID, remove it first
+    const existingStyleTag = document.querySelector('#dynamic-tailwind-styles');
+    if (existingStyleTag) {
+        existingStyleTag.remove();
+    }
+    styleTag.id = 'dynamic-tailwind-styles'; // Assign a unique ID to the <style> tag
+    document.head.appendChild(styleTag);
+}
+</script>
 <style src="../../../../node_modules/@vueform/multiselect/themes/default.css"></style>
 
 <style>
 .is-open {
     z-index: 99 !important;
 }
-
 .multiselect-placeholder {
     text-wrap: nowrap !important;
 }
-
-.multiselect-option:hover, .multiselect-option.is-pointed:hover {
-    color: black !important;
-}
-
-.multiselect-tag {
-    background: black !important;
-}
-
 .multiselect {
     padding-right: 50px;
 }
-
 .multiselect-caret {
     left: 53px;
 }
@@ -129,7 +179,6 @@ const emit = defineEmits(['change']);
 .multiselect-clear {
     right: -56px;
 }
-
 .multiselect-search,
 .multiselect-search:focus,
 .multiselect-search:hover,
@@ -139,40 +188,10 @@ const emit = defineEmits(['change']);
     outline: none !important;
     box-shadow: none !important;
 }
-
-.multiselect-option.is-selected.is-pointed,
-.multiselect-option.is-selected {
-    color: white !important;
-    background: #3490dc;
-}
-
-.multiselect-option:hover, .multiselect-option.is-pointed:hover {
-    color: white !important;
-    background: #3490dc;
-}
-
 .multiselect-single-label {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.multiselect.is-active {
-    box-shadow: none;
-    border: 1px solid #3490dc;
-    outline: 1px solid #3490dc!important;
-
-}
-
-.multiselect {
-    box-shadow: none;
-    border: 1px solid rgb(78 77 77);
-}
-
-.multiselect-dropdown {
-    border-top: 2px solid white !important;
-    border: 2px solid #3490dc;
-    overflow: hidden;
 }
 
 </style>
