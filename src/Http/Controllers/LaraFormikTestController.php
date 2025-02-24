@@ -45,7 +45,7 @@ class LaraFormikTestController extends Controller
 
     public function index(Request $request)
     {
-        
+
 
         TableActionMenu::make([
             CustomItem::make(User::class, 'paid')->name("Make action 2"),
