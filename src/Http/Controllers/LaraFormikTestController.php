@@ -3,33 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Inertia\Inertia;
 use Kathore\LaraFormik\Notification\ToastNotification;
-use Kathore\LaraFormik\Table\Action\CustomItem;
-use Kathore\LaraFormik\Table\Action\DeleteItems;
-use Kathore\LaraFormik\Table\Action\Table;
-use Kathore\LaraFormik\Table\Action\TableActionMenu;
+use Kathore\LaraFormik\Table;
+use Kathore\LaraFormik\Table\BulkActions\CustomItem;
+use Kathore\LaraFormik\Table\BulkActions\DeleteItems;
 use Kathore\LaraFormik\Table\Filter\CheckBoxInput;
 use Kathore\LaraFormik\Table\Filter\RadioInput;
 use Kathore\LaraFormik\Table\Filter\SelectInput;
 use Kathore\LaraFormik\Table\Filter\SwitchInput;
-use Kathore\LaraFormik\Table\Filter\TableFilter;
+use Kathore\LaraFormik\Table\TableColumn;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class LaraFormikTestController extends Controller
 {
-    public function tableActions()
+
+    public function bulkActionsHandler(): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            switch (Table::getActionId()) {
+            switch (Table\TableHelper::getActionId()) {
                 case "paid":
-                    $selectedData = Table::selectedItems();
-                    $selectedData->query()
-                        ->update([
-                            'status' => true
-                        ]);
+                    $selectedData = Table\TableHelper::selectedItems(function ($query) {
+                        $query->select('id');
+                    });
+                    $selectedData->update([
+                        'is_verify' => true
+                    ]);
                     break;
             }
             DB::commit();
@@ -43,64 +44,70 @@ class LaraFormikTestController extends Controller
         return redirect()->back();
     }
 
-    public function index(Request $request)
+    public function index()
     {
 
+        Table::make(User::class)
+            ->label('Users')
+            ->createActionButton('Create User', '#')
+            ->columns([
+                TableColumn::make('name')->searchable(),
+                TableColumn::make('email')->searchable()->sortable(),
+                TableColumn::make('action')
+            ])
+            ->filters([
+                SelectInput::make('email')
+                    ->options(User::query()->pluck('email')->toArray())
+                    ->label("Course")
+                    ->multiple()
+                    ->resetKey(['batch', 'year'])
+                    ->query(function ($query, $value) {
+                        $query->whereIn('email', $value);
+                    }),
+                SelectInput::make('year')
+                    ->options(['First Year', 'Second Year', 'Third Year'])
+                    ->label("Year")
+                    ->multiple()
+                    ->resetKey(['batch'])
+                    ->query(function ($query, $value) {
+                        $query->whereIn('email', $value);
+                    }),
+                SwitchInput::make('status')
+                    ->label("Status")
+                    ->query(function ($query, $value) {
+                        $query->where('email', $value);
+                    }),
+                RadioInput::make('gender')
+                    ->label("Gender")
+                    ->options(['male', 'female', 'other'])
+                    ->query(function ($query, $value) {
+                        $query->where('email', $value);
+                    }),
+                CheckBoxInput::make('Status')
+                    ->label("Check")
+                    ->options(['Active', 'InActive', 'Deleted', 'Open'])
+                    ->query(function ($query, $value) {
+                        $query->where('email', $value);
+                    }),
 
-        TableActionMenu::make([
-            CustomItem::make(User::class, 'paid')->name("Make action 2"),
-            DeleteItems::make(User::class)->isConfirm()->name("Remove"),
-        ])
-            ->isPaginated();
+            ])
+            ->bulkActions([
+                CustomItem::make('paid')
+                    ->name("Make action 2"),
+                DeleteItems::make()
+                    ->isConfirm()
+                    ->name("Remove"),
+            ])
+            ->query(function ($query) {
+                $query->whereNull('email_verified_at');
+            })
+            ->paginate();
 
-
-        TableFilter::make([
-
-            SelectInput::make('email')
-                ->options(User::query()->pluck('email')->toArray())
-                ->label("Course")
-                ->multiple()
-                ->resetKey(['batch', 'year']),
-
-            SelectInput::make('year')
-                ->options(['First Year', 'Second Year', 'Third Year'])
-                ->label("Year")
-                ->multiple()
-                ->resetKey(['batch']),
-
-            SelectInput::make('batch')
-                ->options(['2018', '2019', '2020', '2021', '2022', '2023', '2024'])
-                ->multiple()
-                ->label("Batch"),
-
-            SwitchInput::make('status')
-                ->label("Status"),
-
-            RadioInput::make('gender')
-                ->label("Gender")
-                ->options(['male', 'female', 'other']),
-
-            CheckBoxInput::make('Status')
-                ->label("Check")
-                ->options(['Active', 'InActive', 'Deleted', 'Open']),
-
-        ])->isFilterButton();
-
-        return Inertia::render('LaraFormikTestPage', [
-            'users' => \App\Models\User::query()
-                ->when(\request('email'), function ($query) {
-                    $ids = TableFilter::getIds(User::class, 'email', 'email');
-                    $query->whereIn('id', $ids);
-                })
-                ->when(request()->get('keyword'), function ($query, $keyword) {
-                    $query->where('name', 'like', '%' . $keyword . '%');
-                })->when(request()->get('direction'), function ($query) {
-                    $query->orderBy(
-                        request()->get('sortBy'),
-                        request()->get('direction')
-                    );
-                })
-                ->paginate(20),
-        ]);
+        return Inertia::render('LaraFormikTestPage');
     }
+
+    /**
+     * Display the user's profile form.
+     */
+
 }
