@@ -1,6 +1,6 @@
 <?php
 
-namespace Kathore\LaraFormik\Table;
+namespace App\VueTable\Table;
 class TableColumn
 {
 

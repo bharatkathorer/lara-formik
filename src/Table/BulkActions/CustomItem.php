@@ -1,6 +1,6 @@
 <?php
 
-namespace Kathore\LaraFormik\Table\BulkActions;
+namespace App\VueTable\Table\BulkActions;
 
 class CustomItem
 {

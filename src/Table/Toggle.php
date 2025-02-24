@@ -1,8 +1,8 @@
 <?php
 
-namespace Kathore\LaraFormik\Table;
+namespace App\VueTable\Table;
 
-use Kathore\LaraFormik\Table\Filter\BaseFilter;
+use App\VueTable\Table\Filter\BaseFilter;
 
 class Toggle extends BaseFilter
 {

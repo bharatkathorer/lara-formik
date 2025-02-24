@@ -1,6 +1,6 @@
 <?php
 
-namespace Kathore\LaraFormik\Table\Filter;
+namespace App\VueTable\Table\Filter;
 
 class RadioInput extends BaseFilter
 {
