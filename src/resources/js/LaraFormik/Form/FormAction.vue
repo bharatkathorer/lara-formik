@@ -9,7 +9,7 @@
         <div class="col-span-full flex gap-2" v-if="isActions">
             <slot name="action">
                 <ButtonComponent @click="handleCancel" label="Cancel" mode="light"/>
-                <ButtonComponent :mode="mode" :loading="loading"
+                <ButtonComponent :loading="loading"
                                  :disabled="disabled"
                                  type="submit" :label="actionLabel"/>
             </slot>
@@ -31,11 +31,7 @@ const props = defineProps({
     isActions: {
         type: Boolean,
         default: true
-    },
-    mode: {
-        type: String,
-        default: 'dark'
-    },
+    }
 });
 const handleCancel = () => {
     window.history.back();

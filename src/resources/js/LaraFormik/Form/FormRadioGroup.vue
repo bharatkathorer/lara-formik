@@ -5,8 +5,7 @@
             <div class="flex items-center gap-2 cursor-pointer" v-for="(item,index) in options">
 
                 <input :name="name" :id="`id_${index}_${(typeOfObject?item?.[returnKey]:item)}_${idKey}`"
-                       class="shadow-sm  cursor-pointer"
-                       :class="[colors.active]"
+                       class="border-dark-light text-primary shadow-sm focus:ring-primary cursor-pointer"
                        type="radio"
                        :disabled="disabled"
                        v-bind="$attrs"
@@ -14,8 +13,7 @@
                        v-model="model"
                        :value="typeOfObject?item?.[returnKey]:item"
                        :required="required"/>
-                <InputLabel :class="disabled?'cursor-not-allowed':'cursor-pointer'"
-                            :for="`id_${index}_${(typeOfObject?item?.[returnKey]:item)}_${idKey}`"
+                <InputLabel :class="disabled?'cursor-not-allowed':'cursor-pointer'" :for="`id_${index}_${(typeOfObject?item?.[returnKey]:item)}_${idKey}`"
                             :value="typeOfObject?item?.[labelKey]:item"/>
             </div>
         </div>
@@ -30,7 +28,7 @@ import InputLabel from "@/LaraFormik/Form/InputLabel.vue";
 import InputError from "@/LaraFormik/Form/InputError.vue";
 
 const model = defineModel({
-    type: [String, null],
+    type: [String,null],
     required: true,
 });
 
@@ -63,10 +61,6 @@ const props = defineProps({
     options: {
         type: Object,
         default: []
-    },
-    mode: {
-        type: String,
-        default: 'dark'
     }
 })
 
@@ -79,43 +73,14 @@ const typeOfObject = computed(() => {
 
 // defineEmits(['update:modelValue']);
 
-const colors = computed(() => {
-    switch (props.mode) {
-        case "primary":
-            return {
-                active: 'border-primary-light text-primary focus:ring-primary',
-            }
-        case "secondary":
-            return {
-                active: 'border-secondary-light text-secondary focus:ring-secondary',
-            }
-        case "success":
-            return {
-                active: 'border-success-light text-success focus:ring-success',
-            }
-        case "warning":
-            return {
-                active: 'border-warning-light text-warning focus:ring-warning',
-            }
-        case "danger":
-            return {
-                active: 'border-danger-light text-danger focus:ring-danger',
-            }
-        case "info":
-            return {
-                active: 'border-info-light text-info focus:ring-info',
-            }
-        case "light":
-            return {
-                active: 'border-light-light text-light focus:ring-light',
-            }
-        case "dark":
-            return {
-                active: 'border-dark-light text-dark focus:ring-dark',
-            }
+const toLowercase = computed(() => {
+    if (typeof model == 'string') {
+        return model.toLowerCase();
     }
-    return {
-        active: 'border-dark-light text-primary focus:ring-primary',
-    }
+    return model
 })
+
+const handleISCheck = ()=>{
+
+}
 </script>

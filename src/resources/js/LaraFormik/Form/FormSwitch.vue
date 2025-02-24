@@ -5,7 +5,7 @@
             <Switch
                 :disabled="disabled"
                 v-model="model"
-                :class="[model ? colors.inactive : colors.active,styles.switch]"
+                :class="[model ? 'bg-primary-active' : 'bg-primary',styles.switch]"
                 class="relative inline-flex  shrink-0 cursor-pointer rounded-full
                 border-2 border-transparent transition-colors duration-200
                 ease-in-out focus:outline-none focus-visible:ring-2
@@ -15,9 +15,7 @@
                 <span
                     aria-hidden="true"
                     :class="styles.circle"
-                    class="pointer-events-none inline-block transform
-                    rounded-full bg-white shadow-lg ring-0 transition
-                    duration-200 ease-in-out"
+                    class="pointer-events-none inline-block transform rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out"
                 />
             </Switch>
             <InputLabel class="cursor-pointer" @click="model=!model" v-if="name" :value="name"></InputLabel>
@@ -53,10 +51,6 @@ const props = defineProps({
         type: String,
         default: 'md'
     },
-    mode: {
-        type: String,
-        default: 'dark'
-    },
 });
 
 const styles = computed(() => {
@@ -83,58 +77,6 @@ const styles = computed(() => {
             };
     }
 
-})
-const colors = computed(() => {
-    switch (props.mode) {
-        case "primary":
-            return {
-                active: 'bg-primary',
-                inactive: 'bg-primary-active',
-            }
-        case "secondary":
-
-            return {
-                active: 'bg-secondary',
-                inactive: 'bg-secondary-active',
-            }
-        case "success":
-            return {
-                active: 'bg-success',
-                inactive: 'bg-success-active',
-            }
-        case "warning":
-            return {
-                active: 'bg-warning',
-                inactive: 'bg-warning-active',
-            }
-        case "danger":
-            return {
-                active: 'bg-danger',
-                inactive: 'bg-danger-active',
-            }
-        case "info":
-
-            return {
-                active: 'bg-info',
-                inactive: 'bg-info-active',
-            }
-        case "light":
-
-            return {
-                active: 'bg-light',
-                inactive: 'bg-light-active',
-            }
-        case "dark":
-
-            return {
-                active: 'bg-dark',
-                inactive: 'bg-dark-active',
-            }
-    }
-    return {
-        active: 'bg-primary',
-        inactive: 'bg-primary-active',
-    }
 })
 
 </script>

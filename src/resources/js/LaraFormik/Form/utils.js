@@ -1,5 +1,5 @@
 import {router} from "@inertiajs/vue3";
-import tailwindConfig from '../../../../tailwind.config.js'
+
 // export const getParameters = () => {
 //     let uri = window.location.href.split('?');
 //     if (uri?.length === 2) {
@@ -17,8 +17,6 @@ import tailwindConfig from '../../../../tailwind.config.js'
 //     }
 //     return [];
 // }
-
-export const tailwindColors = tailwindConfig?.theme?.extend?.colors ?? {};
 export const getParameters = () => {
     let uri = window.location.href.split('?');  // Split the URL at the query string
     let getVars = {};  // To store the query parameters
@@ -92,7 +90,7 @@ export const makeParameter = (name = false, value = false, start = true) => {
     let param = null;
 
     param = Object.entries(data)
-        .filter(([key, value]) => !(value == null || value === '' || value === undefined || value === false))
+        .filter(([key, value]) => !(value == null || value === '' || value === undefined || value===false))
         .map(([key, value]) => {
             if (Array.isArray(value)) {
                 return value.map(val => `${key}[]=${val}`).join('&');
@@ -121,6 +119,6 @@ export const setPath = (page) => {
     if (pathname !== '/') {
         url = url + pathname;
     }
-    router.replace(url + page);
+    router.visit(url + page);
     // window.history.replaceState('', '', url + page);
 }

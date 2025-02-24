@@ -1,18 +1,19 @@
 <?php
 
 namespace Kathore\LaraFormik\Controllers;
-use Kathore\LaraFormik\Table\Action\Table;
+
+use Kathore\LaraFormik\Table\Action\TableHelper;
 
 class TableController
 {
     public function __invoke()
     {
-        if (Table::handleActions() && Table::getActionId() == "delete") {
-            Table::selectedItems()->delete();
-            return redirect()->back()->with('success', Table::requestData()->success_message);
+        if (TableHelper::handleActions() && TableHelper::getActionId() == "delete") {
+            TableHelper::selectedItems()->delete();
+            return redirect()->back()->with('success', TableHelper::requestData()->success_message);
         } else {
-            $controllerClass = Table::requestData()->controller;
-            $action_name = Table::actionMethod();
+            $controllerClass = TableHelper::requestData()->controller;
+            $action_name = 'bulkActionsHandler';
             if (class_exists($controllerClass) && method_exists($controllerClass, $action_name)) {
                 $controller = app()->make($controllerClass);
                 return $controller->$action_name(\request());
@@ -22,3 +23,4 @@ class TableController
         }
     }
 }
+

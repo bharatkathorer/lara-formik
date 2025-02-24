@@ -1,10 +1,10 @@
 <?php
 
-namespace Kathore\LaraFormik\Table\Action;
+namespace Kathore\LaraFormik\Table\BulkActions;
 
 class DeleteItems
 {
-    protected $data = [
+    protected array $data = [
         'name' => "Delete",
         'id' => 'delete',
         'modal' => "",
@@ -15,59 +15,62 @@ class DeleteItems
         'success_message' => "The selected items  have been deleted successfully.",
     ];
 
-    public function init()
+    public function init(): array
     {
         return $this->data;
     }
 
-    public static function make(string $className, string $id_name = null)
+    public static function make(string $id = 'delete'): self
     {
-        if (!$id_name) {
-            $id_name = "delete";
-        }
         $instance = new self();
-        $instance->data['modal'] = $className;
-        $instance->data['id'] = $id_name;
+        $instance->data['id'] = $id;
         return $instance;
     }
 
-    public function label(string $value)
+
+    public function model(string $model): self
+    {
+        $this->data['model'] = $model;
+        return $this;
+    }
+
+    public function label(string $value): self
     {
         $this->data['label'] = $value;
         return $this;
     }
 
-    public function name(string $value)
+    public function name(string $value): self
     {
         $this->data['name'] = $value;
         return $this;
     }
 
-    public function isConfirm()
+    public function isConfirm(): self
     {
         $this->data['confirm'] = true;
         return $this;
     }
 
-    public function isEmit()
+    public function isEmit(): self
     {
         $this->data['isEmit'] = true;
         return $this;
     }
 
-    public function isCustomeAction()
+    public function isCustomAction(): self
     {
         $this->data['handleActions'] = false;
         return $this;
     }
 
-    public function message(string $message)
+    public function message(string $message): self
     {
         $this->data['message'] = $message;
         return $this;
     }
 
-    public function successMessage(string $successMessage)
+    public function successMessage(string $successMessage): self
     {
         $this->data['success_message'] = $successMessage;
         return $this;

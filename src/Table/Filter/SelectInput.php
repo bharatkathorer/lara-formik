@@ -2,9 +2,9 @@
 
 namespace Kathore\LaraFormik\Table\Filter;
 
-class SelectInput
+class SelectInput extends BaseFilter
 {
-    protected $data = [
+    protected array $data = [
         'label' => null,
         'id' => null,
         'key' => null,
@@ -16,64 +16,57 @@ class SelectInput
         'value' => ''
     ];
 
-    public function label(string $value)
+    public function label(string $value): self
     {
         $this->data['label'] = $value;
         return $this;  // Return the instance for chaining
     }
 
-    public function setId(string $value)
+    public function setId(string $value): self
     {
         $this->data['id'] = $value;
         return $this;  // Return the instance for chaining
     }
 
-    public function resetKey(array $value = [])
+    public function resetKey(array $value = []): self
     {
         $this->data['resetKey'] = $value;
         return $this;  // Return the instance for chaining
     }
 
-    public function options(array $value = [])
+    public function options(array $value = []): self
     {
         $this->data['options'] = $value;
         return $this;  // Return the instance for chaining
     }
 
-    public function multiple()
+    public function multiple(): self
     {
         $this->data['mode'] = 'tags';
         return $this;  // Return the instance for chaining
     }
 
-    public function isEmit()
+    public function isEmit(): self
     {
         $this->data['isEmit'] = true;
         return $this;  // Return the instance for chaining
     }
 
-    public function init()
+    public function init(): array
     {
-        $param = $this->data['key'];
+
+        $key = $this->data['key'] = $this->key;
         $value = ($this->data['mode'] === 'tags') ? [] : "";
-        if (request()->get($param)) {
+
+        if (request()->get($key)) {
             if ($this->data['mode'] === 'tags') {
-                $value = request()->get($param);
+                $value = request()->get($key);
             } else {
-                $value = request()->get($param);
+                $value = request()->get($key);
             }
         }
         $this->data['value'] = $value;
         return $this->data;
-    }
-
-    public static function make(string $param)
-    {
-        $instance = new self();  // Create a new instance of the object
-
-        $instance->data['key'] = $param;  // Initialize the key
-        // Return the instance to allow chaining
-        return $instance;
     }
 
 }

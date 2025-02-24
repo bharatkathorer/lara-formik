@@ -1,36 +1,41 @@
 <?php
 
-namespace Kathore\LaraFormik\Table\Action;
+namespace Kathore\LaraFormik\Table\BulkActions;
 
 class CustomItem
 {
-    protected $data = [
+    protected array $data = [
         'name' => "Make action",
         'id' => null,
         'modal' => '',
     ];
 
-    public function init()
+    public function init(): array
     {
         return $this->data;
     }
 
-    public static function make(string $className, string $id = null)
+    public static function make(string $id): self
     {
         $instance = new self();
-        $instance->data['modal'] = $className;
         $instance->data['id'] = $id;
         return $instance;
     }
 
+    public function model(string $model): self
+    {
+        $this->data['model'] = $model;
+        return $this;
+    }
 
-    public function name(string $value)
+
+    public function name(string $value): self
     {
         $this->data['name'] = $value;
         return $this;
     }
 
-    public function id(string $value)
+    public function id(string $value): self
     {
         $this->data['id'] = $value;
         return $this;
