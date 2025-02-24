@@ -316,21 +316,35 @@ class TestController extends Controller
 
 namespace App\Http\Controllers;
 
-use App\Models\User;use Illuminate\Http\Request;use Illuminate\Support\Facades\DB;use Inertia\Inertia;use Kathore\LaraFormik\Notification\ToastNotification;use Kathore\LaraFormik\Table\Action\CustomItem;use Kathore\LaraFormik\Table\Action\DeleteItems;use Kathore\LaraFormik\Table\Action\Table;use Kathore\LaraFormik\Table\Action\TableActionMenu;use Kathore\LaraFormik\Table\Filter\CheckBoxInput;use Kathore\LaraFormik\Table\Filter\RadioInput;use Kathore\LaraFormik\Table\Filter\SelectInput;use Kathore\LaraFormik\Table\Filter\SwitchInput;use Kathore\LaraFormik\Table\Filter\TableFilter;
+use App\Models\User;
+use Kathore\LaraFormik\Notification\ToastNotification;
+use Kathore\LaraFormik\Table;
+use Kathore\LaraFormik\Table\BulkActions\CustomItem;
+use Kathore\LaraFormik\Table\BulkActions\DeleteItems;
+use Kathore\LaraFormik\Table\Filter\CheckBoxInput;
+use Kathore\LaraFormik\Table\Filter\RadioInput;
+use Kathore\LaraFormik\Table\Filter\SelectInput;
+use Kathore\LaraFormik\Table\Filter\SwitchInput;
+use Kathore\LaraFormik\Table\TableColumn;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class LaraFormikTestController extends Controller
 {
-    public function tableActions()
+
+    public function bulkActionsHandler(): RedirectResponse
     {
         DB::beginTransaction();
         try {
-            switch (Table::getActionId()) {
+            switch (Table\TableHelper::getActionId()) {
                 case "paid":
-                    $selectedData = Table::selectedItems();
-                    $selectedData->query()
-                        ->update([
-                            'status' => true
-                        ]);
+                    $selectedData = Table\TableHelper::selectedItems(function ($query) {
+                        $query->select('id');
+                    });
+                    $selectedData->update([
+                        'is_verify' => true
+                    ]);
                     break;
             }
             DB::commit();
@@ -344,65 +358,72 @@ class LaraFormikTestController extends Controller
         return redirect()->back();
     }
 
-    public function index(Request $request)
+    public function index()
     {
 
-        TableActionMenu::make([
-            CustomItem::make(User::class, 'paid')->name("Make action 2"),
-            DeleteItems::make(User::class)->isConfirm()->name("Remove"),
-        ])
-            ->isPaginated();
+        Table::make(User::class)
+            ->label('Users')
+            ->createActionButton('Create User', '#')
+            ->columns([
+                TableColumn::make('name')->searchable(),
+                TableColumn::make('email')->searchable()->sortable(),
+                TableColumn::make('action')
+            ])
+            ->filters([
+                SelectInput::make('email')
+                    ->options(User::query()->pluck('email')->toArray())
+                    ->label("Course")
+                    ->multiple()
+                    ->resetKey(['batch', 'year'])
+                    ->query(function ($query, $value) {
+                        $query->whereIn('email', $value);
+                    }),
+                SelectInput::make('year')
+                    ->options(['First Year', 'Second Year', 'Third Year'])
+                    ->label("Year")
+                    ->multiple()
+                    ->resetKey(['batch'])
+                    ->query(function ($query, $value) {
+                        $query->whereIn('email', $value);
+                    }),
+                SwitchInput::make('status')
+                    ->label("Status")
+                    ->query(function ($query, $value) {
+                        $query->where('email', $value);
+                    }),
+                RadioInput::make('gender')
+                    ->label("Gender")
+                    ->options(['male', 'female', 'other'])
+                    ->query(function ($query, $value) {
+                        $query->where('email', $value);
+                    }),
+                CheckBoxInput::make('Status')
+                    ->label("Check")
+                    ->options(['Active', 'InActive', 'Deleted', 'Open'])
+                    ->query(function ($query, $value) {
+                        $query->where('email', $value);
+                    }),
 
+            ])
+            ->bulkActions([
+                CustomItem::make('paid')
+                    ->name("Make action 2"),
+                DeleteItems::make()
+                    ->isConfirm()
+                    ->name("Remove"),
+            ])
+            ->query(function ($query) {
+                $query->whereNull('email_verified_at');
+            })
+            ->paginate();
 
-        TableFilter::make([
-
-            SelectInput::make('email')
-                ->options(User::query()->pluck('email')->toArray())
-                ->label("Course")
-                ->multiple()
-                ->resetKey(['batch', 'year']),
-
-            SelectInput::make('year')
-                ->options(['First Year', 'Second Year', 'Third Year'])
-                ->label("Year")
-                ->multiple()
-                ->resetKey(['batch']),
-
-            SelectInput::make('batch')
-                ->options(['2018', '2019', '2020', '2021', '2022', '2023', '2024'])
-                ->multiple()
-                ->label("Batch"),
-
-            SwitchInput::make('status')
-                ->label("Status"),
-
-            RadioInput::make('gender')
-                ->label("Gender")
-                ->options(['male', 'female', 'other']),
-
-            CheckBoxInput::make('Status')
-                ->label("Check")
-                ->options(['Active', 'InActive', 'Deleted', 'Open']),
-
-        ])->isFilterButton();
-
-        return Inertia::render('LaraFormikTestPage', [
-            'users' => \App\Models\User::query()
-                ->when(\request('email'), function ($query) {
-                    $ids = TableFilter::getIds(User::class, 'email', 'email');
-                    $query->whereIn('id', $ids);
-                })
-                ->when(request()->get('keyword'), function ($query, $keyword) {
-                    $query->where('name', 'like', '%' . $keyword . '%');
-                })->when(request()->get('direction'), function ($query) {
-                    $query->orderBy(
-                        request()->get('sortBy'),
-                        request()->get('direction')
-                    );
-                })
-                ->paginate(20),
-        ]);
+        return Inertia::render('LaraFormikTestPage');
     }
+
+    /**
+     * Display the user's profile form.
+     */
+
 }
 
 ```
@@ -418,87 +439,80 @@ Route::post('actions', \Kathore\LaraFormik\Controllers\TableController::class)
 Vue js page added this sample file
 
 ```vue
-
 <template>
-  <SideBarComponent v-model="form.switch" backdrop-class="bg-light-disable">
-  </SideBarComponent>
-  <div class="p-10">
-    <FormAction title="Add Users" class="grid grid-cols-2 gap-6"
-                :loading="form.check"
-                :disabled="form.check"
-                @submit="()=>{
-                        form.check=true;
-                        console.log('sample')}">
+    <Layout1>
+                <SideBarComponent v-model="form.switch" backdrop-class="bg-light-disable">
+                </SideBarComponent>
 
-      <FormInput v-model="form.name" label="Full name"/>
-      <FormInput v-model="form.password" label="Password" type="password"/>
-      <FormMultiselect
-          label="Select name"
-          :options="options"
-          label-key="label"
-          mode="multiple"
-          v-model="form.select"
-      />
-      <FormRadioGroup :options="genderOptions" label="Gender" v-model="form.gender"/>
-      <FormSwitch class="col-span-2" name="Open Sidebar" required size="md" v-model="form.switch"/>
-      <FormSwitch class="col-span-2" name="Open Modal" required size="md" v-model="form.modal"/>
-      <FormCheckbox v-model="form.check" name="Toggle submitting form "/>
-    </FormAction>
-  </div>
-  <div class="px-10">
-    <TableComponent label="Users"
-                    :action="{
-                        label:'Add USer',
-                        href:'/login'
-                        }"
-                    searchLink="/"
-                    :options="users"
-                    :fields="fields"
+                <div class="mb-10">
+                    <FormAction :mode="mode" title="Add Users" class="grid grid-cols-2 gap-6"
+                                :loading="form.check"
+                                :disabled="form.check"
+                                @submit="()=>{
+                                form.check=true;
+                                console.log('sample')}">
+                        <FormInput class="col-span-full" textarea :mode="mode" v-model="form.name" label="Full name"/>
+                        <FormInput :mode="mode" v-model="form.password" label="Password" type="password"/>
+                        <FormMultiselect
+                            label="Select name"
+                            :options="options"
+                            label-key="label"
+                            mode="multiple"
+                            v-model="form.select"
+                        />
+                        <FormRadioGroup :mode="mode" :options="genderOptions" label="Gender" v-model="form.gender"/>
+                        <FormSwitch :mode="mode" class="col-span-2" name="Open Sidebar" required size="md"
+                                    v-model="form.switch"/>
+                        <FormSwitch :mode="mode" class="col-span-2" name="Open Modal" required size="md" v-model="form.modal"/>
+                        <FormCheckbox :mode="mode" v-model="form.check" name="Toggle submitting form "/>
 
-    >
-      <template #action="{item}">
-        <ActionComponent
-            edit-href="/"
-            delete-href="/"
-            view-href="/"
-            :options="options"
-            @dropdown-click="handleDropdown"
-        />
-      </template>
-    </TableComponent>
-  </div>
-  <div class="px-10 mt-4 ">
-    <TabComponent :options="tabs"></TabComponent>
-    <!--        <RichTextArea/>-->
-  </div>
-  <ModalComponent
-      title="sample"
-      body="Are you sure delete this item"
-      v-model="form.modal"
-      @submit="form.modal=false"
-  >
-    <FormInput v-model="form.name" label="Full name"/>
-  </ModalComponent>
-  <ToastNotification/>
+                    </FormAction>
+                </div>
+        <div>
+            <TableComponent :mode="mode">
+                <template #action="{item}">
+                    <ActionComponent
+                        edit-href="/"
+                        delete-href="/"
+                        view-href="/"
+                        :options="options"
+                        @dropdown-click="handleDropdown"
+                    />
+                </template>
+            </TableComponent>
+        </div>
+                <div class=" mt-4 ">
+                    <TabComponent :mode="mode" :options="tabs"></TabComponent>
+                    <!--        <RichTextArea/>-->
+                </div>
+        <ModalComponent
+            title="sample"
+            body="Are you sure delete this item"
+            v-model="form.modal"
+            @submit="form.modal=false"
+        >
+            <FormInput :mode="mode" v-model="form.name" label="Full name"/>
+        </ModalComponent>
+    </Layout1>
 </template>
 <script setup>
-  import {useForm, usePage} from "@inertiajs/vue3";
-  import {computed} from "vue";
-  import ModalComponent from "@/LaraFormik/Form/ModalComponent.vue";
-  import TableComponent from "@/LaraFormik/Form/Table/TableComponent.vue";
-  import ActionComponent from "@/LaraFormik/Form/Table/ActionComponent.vue";
-  import FormInput from "@/LaraFormik/Form/FormInput.vue";
-  import FormRadioGroup from "@/LaraFormik/Form/FormRadioGroup.vue";
-  import FormCheckbox from "@/LaraFormik/Form/FormCheckbox.vue";
-  import FormMultiselect from "@/LaraFormik/Form/FormMultiselect.vue";
-  import FormSwitch from "@/LaraFormik/Form/FormSwitch.vue";
-  import ToastNotification from "@/LaraFormik/Notification/ToastNotification.vue";
-  import SideBarComponent from "@/LaraFormik/Other/SideBarComponent.vue";
-  import TabComponent from "@/LaraFormik/Other/TabComponent.vue";
-  import FormAction from "@/LaraFormik/Form/FormAction.vue";
+import {useForm, usePage} from "@inertiajs/vue3";
+import {computed} from "vue";
+import ModalComponent from "@/LaraFormik/Form/ModalComponent.vue";
+import TableComponent from "@/LaraFormik/Form/Table/TableComponent.vue";
+import ActionComponent from "@/LaraFormik/Form/Table/ActionComponent.vue";
+import FormInput from "@/LaraFormik/Form/FormInput.vue";
+import FormRadioGroup from "@/LaraFormik/Form/FormRadioGroup.vue";
+import FormCheckbox from "@/LaraFormik/Form/FormCheckbox.vue";
+import FormMultiselect from "@/LaraFormik/Form/FormMultiselect.vue";
+import FormSwitch from "@/LaraFormik/Form/FormSwitch.vue";
+import SideBarComponent from "@/LaraFormik/Other/SideBarComponent.vue";
+import TabComponent from "@/LaraFormik/Other/TabComponent.vue";
+import FormAction from "@/LaraFormik/Form/FormAction.vue";
+import Layout1 from "@/LaraFormik/Layouts/LayoutComponent.vue";
 
-  const users = computed(() => usePage().props.users);
-  const form = useForm({
+const users = computed(() => usePage().props.users);
+const form = useForm({
     name: '',
     gender: 'Female',
     password: '',
@@ -507,37 +521,38 @@ Vue js page added this sample file
     modal: false,
     select: [1, 2, 3],
     tab: '',
-  });
-  const fields = [
+});
+const fields = [
     {key: 'name', label: 'name', sortKey: "name"},
     {key: 'email', label: 'email'},
     {key: 'action', label: 'action'}
-  ];
-  const tabs = [
+];
+const tabs = [
     {key: 'customer', label: 'Customer',},
     {key: 'admin', label: 'Admin',},
     {key: 'new', label: 'Latest',},
     {key: 'st', label: 'bharat',},
     {key: 'dk', label: 'Kathore',},
     {key: 'user', label: 'User', href: '/'},
-  ];
+];
 
-  const genderOptions = [
+const genderOptions = [
     {id: 1, label: 'Male', value: 'male'},
     {id: 1, label: 'Female', value: 'f_male'},
-  ]
-  const options = [
+]
+const options = [
     {id: 1, label: 'Customer', isReturn: true},
     {id: 2, label: 'Admin', target: '_blank', href: "/#"},
     {id: 3, label: 'User', href: "/#", method: 'post'},
-  ]
-  const handleDropdown = (item) => {
+]
+const handleDropdown = (item) => {
     console.log(item)
-  }
-  const submitForm = () => {
+}
+const submitForm = () => {
     form.post(route('actions'));
-  }
-</script>
+}
 
+const mode = "dark"
+</script>
 ```
 
