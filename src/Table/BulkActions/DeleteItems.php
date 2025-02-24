@@ -1,6 +1,6 @@
 <?php
 
-namespace App\VueTable\Table\BulkActions;
+namespace Kathore\LaraFormik\Table\BulkActions;
 
 class DeleteItems
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\VueTable\Table\Filter;
+namespace Kathore\LaraFormik\Table\Filter;
 
 use Closure;
 use Illuminate\Database\Eloquent\Builder;
