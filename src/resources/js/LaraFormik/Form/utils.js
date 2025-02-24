@@ -1,5 +1,5 @@
 import {router} from "@inertiajs/vue3";
-
+import tailwindConfig from '../../../../tailwind.config.js'
 // export const getParameters = () => {
 //     let uri = window.location.href.split('?');
 //     if (uri?.length === 2) {
@@ -17,6 +17,8 @@ import {router} from "@inertiajs/vue3";
 //     }
 //     return [];
 // }
+
+export const tailwindColors = tailwindConfig?.theme?.extend?.colors ?? {};
 export const getParameters = () => {
     let uri = window.location.href.split('?');  // Split the URL at the query string
     let getVars = {};  // To store the query parameters
@@ -90,7 +92,7 @@ export const makeParameter = (name = false, value = false, start = true) => {
     let param = null;
 
     param = Object.entries(data)
-        .filter(([key, value]) => !(value == null || value === '' || value === undefined || value===false))
+        .filter(([key, value]) => !(value == null || value === '' || value === undefined || value === false))
         .map(([key, value]) => {
             if (Array.isArray(value)) {
                 return value.map(val => `${key}[]=${val}`).join('&');
@@ -119,6 +121,57 @@ export const setPath = (page) => {
     if (pathname !== '/') {
         url = url + pathname;
     }
-    router.visit(url + page);
+    router.replace(url + page);
     // window.history.replaceState('', '', url + page);
+}
+
+export const InputColors = (mode) => {
+    switch (mode) {
+        case "primary":
+            return {
+                text: 'text-primary/90 hover:text-primary-active',
+                active: 'hover:text-primary-active text-primary border-primary-light focus:border-primary focus:ring-primary',
+            }
+        case "secondary":
+            return {
+                text: 'text-secondary/90 hover:text-secondary-active',
+                active: 'hover:text-secondary-active text-secondary border-secondary-light focus:border-secondary focus:ring-secondary',
+            }
+        case "success":
+            return {
+                text: 'text-success/90 hover:text-success-active',
+                active: 'hover:text-success-active text-success border-success-light focus:border-success focus:ring-success',
+            }
+        case "warning":
+            return {
+                text: 'text-warning/90 hover:text-warning-active',
+                active: 'hover:text-warning-active text-warning border-warning-light focus:border-warning focus:ring-warning',
+            }
+        case "danger":
+            return {
+                text: 'text-danger/90 hover:text-danger-active',
+                active: 'hover:text-danger-active text-danger border-danger-light focus:border-danger focus:ring-danger',
+            }
+        case "info":
+            return {
+                text: 'text-info/90 hover:text-info-active',
+                active: 'hover:text-info-active text-info border-info-light focus:border-info focus:ring-info',
+            }
+        case "light":
+            return {
+                text: 'text-light/90 hover:text-light-active',
+                active: 'hover:text-light-active text-light border-light-light focus:border-light focus:ring-light',
+            }
+        case "dark":
+            return {
+                text: 'text-dark/90 hover:text-dark-active',
+                active: 'hover:text-dark-active text-dark border-dark-light focus:border-dark focus:ring-dark',
+            }
+        default:
+            return {
+                text: 'text-primary/90 hover:text-primary-active',
+                active: 'hover:text-primary-active text-primary border-primary-light focus:border-primary focus:ring-primary',
+            }
+    }
+
 }

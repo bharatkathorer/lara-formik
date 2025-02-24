@@ -98,8 +98,8 @@ class InstallLaraFormik extends Command
         @apply text-white bg-gray-800 hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:ring-indigo-500;
     }
 
-    .btn {
-        @apply inline-flex gap-2 items-center px-4 py-2 border border-transparent justify-center cursor-pointer rounded-md font-semibold text-xs uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in-out duration-150 disabled:cursor-not-allowed;
+     .btn {
+        @apply leading-4 focus:outline-none inline-flex gap-2 items-center px-4 py-3 border border-transparent justify-center cursor-pointer rounded-md font-semibold text-xs uppercase tracking-widest transition ease-in-out duration-150 disabled:cursor-not-allowed;
     }
 
     /* Custom CSS Block - LaraFormik */ /* This is the marker to indicate the custom CSS has been added */

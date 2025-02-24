@@ -4,16 +4,19 @@
             <div class="flex-auto">
                 <h1 class="text-base font-semibold leading-6 text-gray-900">{{ actions?.label ?? label }}</h1>
             </div>
-            <div class="ml-16 flex gap-2">
-
-                <Dropdown align="left" width="48" v-if="actionForm.selectedData?.length">
+            <div class="ml-16 flex gap-2 items-center">
+                <p class=" text-sm"
+                   v-if="actions?.options && actions.isPaginateSelect && actionForm.selectedData.length">
+                    Selected {{ actionForm.selectedData.length }}
+                </p>
+                <Dropdown :mode="mode" align="left" width="48" v-if="actionForm.selectedData?.length">
 
                     <template #trigger>
                                             <span class="inline-flex rounded-md cursor-pointer">
                                                 <button type="button"
                                                         class="inline-flex items-center px-4 py-3 text-sm font-medium leading-4
                                                          text-gray-500 transition duration-150 ease-in-out  border
-                                                        d hover:text-gray-700 focus:outline-none border-dark-light focus:border-primary focus:ring-primary rounded-md shadow-sm">
+                                                        d hover:text-gray-700 focus:outline-none border-primary-light focus:border-primary focus:ring-primary rounded-md shadow-sm">
                                                     Actions
                                                     <ChevronDownIcon class="ml-2 -mr-0.5 h-4 w-4"/>
                                                 </button>
@@ -31,6 +34,7 @@
                 </Dropdown>
                 <TextInput
                     v-if="actions.columns.find((item)=>item.isSearchable)"
+                    :mode="mode"
                     v-model="searchKeyword"
                     ref="searchRef"
                     placeholder="Search"
@@ -39,28 +43,25 @@
                     :suffixBg="false"
                     :prefixBg="false"
                     @input="handleSearch">
-                    <template #prefix>
-                        <MagnifyingGlassIcon class="size-6 text-primary"/>
+                    <template #prefix="{item}">
+                        <MagnifyingGlassIcon :class="item.text" class="size-6"/>
                     </template>
-                    <template #suffix>
-                        <XMarkIcon class="size-5 text-gray-500 hover:text-gray-900 font-bold ease-in-out duration-300"
+                    <template #suffix="{item}">
+                        <XMarkIcon class="size-5 text-danger/70 hover:text-danger font-bold ease-in-out duration-300"
                                    @click="handleResetSearch"/>
                     </template>
                 </TextInput>
                 <slot name="actions">
-                    <ButtonComponent v-if="_action?.href" :label="_action.label" :href="_action?.href"/>
+                    <ButtonComponent :mode="mode" v-if="_action?.href" :label="_action.label" :href="_action?.href"/>
                 </slot>
-                <TableFilter/>
+                <TableFilter :mode="mode"/>
             </div>
         </div>
         <div class=" overflow-x-auto rounded-lg">
             <div>
                 <div class="inline-block min-w-full">
-                    <p class="px-6 text-primary text-sm"
-                       v-if="actions?.options && actions.isPaginateSelect && actionForm.selectedData.length">
-                        Selected {{ actionForm.selectedData.length }}
-                    </p>
-                    <TableFilter :is-status="true"/>
+
+                    <TableFilter :mode="mode" :is-status="true"/>
                     <div class="overflow-hidden">
 
                         <table class="min-w-full divide-y divide-gray-300">
@@ -70,16 +71,18 @@
                                     class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6 w-4">
                                     <label
                                     >
-                                        <input
-                                            class="rounded border-dark-light text-primary shadow-sm focus:ring-primary cursor-pointer"
+                                        <Checkbox
+                                            :mode="mode"
                                             :checked="isChecked"
-                                            type="checkbox" @change="(event)=>{
+                                            @change="(event)=>{
                                                 if(event.target.checked){
                                                     actionForm.selectedData = [...actionForm.selectedData,...data_ids.filter((i)=>!actionForm.selectedData.includes(i))]
                                                 }else {
                                                     actionForm.selectedData=actionForm.selectedData.filter((i)=>!data_ids.includes(i));
                                                 }
-                                            }"/></label>
+                                            }"
+                                        />
+                                    </label>
                                 </th>
                                 <th scope="col"
                                     v-for="(field, index) in _fields" :key="index"
@@ -110,9 +113,9 @@
                                 <td v-if="actions?.options"
                                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-500 sm:pl-6">
                                     <div>
-                                        <input
-                                            class="rounded border-dark-light text-primary shadow-sm focus:ring-primary cursor-pointer"
-                                            type="checkbox" v-model="actionForm.selectedData" :value="it?.id"/>
+                                        <Checkbox
+                                            :mode="mode"
+                                            :value="it?.id" v-model="actionForm.selectedData"/>
                                     </div>
                                 </td>
                                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-500 sm:pl-6"
@@ -142,7 +145,9 @@
                                         <div class="text-center">No item Found</div>
                                         <div>
                                             <slot name="actions">
-                                                <ButtonComponent v-if="_action?.href" :label="_action.label"
+                                                <ButtonComponent v-if="_action?.href"
+                                                                 :label="_action.label"
+                                                                 :mode="mode"
                                                                  :href="_action?.href"/>
                                             </slot>
                                         </div>
@@ -156,7 +161,7 @@
                 </div>
             </div>
         </div>
-        <Pagination :options="_options"/>
+        <Pagination :mode="mode" :options="_options"/>
 
     </div>
     <ModalComponent
@@ -179,6 +184,7 @@ import {getParameters, makeParameter, setPath} from "@/LaraFormik/Form/utils.js"
 import Dropdown from "@/LaraFormik/Form/Dropdown.vue";
 import ModalComponent from "@/LaraFormik/Form/ModalComponent.vue";
 import TableFilter from "@/LaraFormik/Form/Table/TableFilter.vue";
+import Checkbox from "@/LaraFormik/Form/Checkbox.vue";
 
 const emit = defineEmits(['handleAction']);
 const backend_props = computed(() => usePage().props);
@@ -194,7 +200,10 @@ const props = defineProps({
     action: {
         type: [Object],
         default: {}
-    },
+    }, mode: {
+        type: String,
+        default: 'primary'
+    }
 })
 
 const _fields = computed(() => {
@@ -254,7 +263,7 @@ onMounted(() => {
 const handleSearch = _lodash.debounce(function () {
 
     const query = makeParameter("keyword", searchKeyword.value);
-    router.visit(`${props.searchLink ?? '/'}${query}`, {
+    router.visit(`${props.searchLink ?? window.location.pathname}${query}`, {
         preserveScroll: true
     });
 }, 500);
@@ -324,4 +333,47 @@ const submitAction = () => {
         }
     });
 }
+const colors = computed(() => {
+    switch (props.mode) {
+        case "primary":
+            return {
+                close2: 'text-primary/50 hover:text-primary',
+            }
+        case "secondary":
+
+            return {
+                close2: 'text-secondary/50 hover:text-secondary',
+            }
+        case "success":
+            return {
+                close2: 'text-success/50 hover:text-success',
+            }
+        case "warning":
+            return {
+                close2: 'text-warning/50 hover:text-warning',
+            }
+        case "danger":
+            return {
+                close2: 'text-danger/50 hover:text-danger',
+            }
+        case "info":
+
+            return {
+                close2: 'text-info/50 hover:text-info',
+            }
+        case "light":
+
+            return {
+                close2: 'text-light/50 hover:text-light',
+            }
+        case "dark":
+
+            return {
+                close2: 'text-dark/50 hover:text-dark',
+            }
+    }
+    return {
+        close2: 'text-primary/50 hover:text-primary',
+    }
+})
 </script>

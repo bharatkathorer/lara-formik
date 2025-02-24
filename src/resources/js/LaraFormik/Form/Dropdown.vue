@@ -1,5 +1,6 @@
 <script setup>
 import {computed, onMounted, onUnmounted, ref} from 'vue';
+import {InputColors} from "@/LaraFormik/Form/utils.js";
 
 const props = defineProps({
     align: {
@@ -19,6 +20,10 @@ const props = defineProps({
     },
     isClose: {
         default: true
+    },
+    mode: {
+        type: String,
+        default: 'primary'
     },
 });
 
@@ -47,6 +52,7 @@ const alignmentClasses = computed(() => {
     }
 });
 
+const colors = computed(() => InputColors(props.mode))
 const open = ref(false);
 </script>
 
@@ -77,7 +83,7 @@ const open = ref(false);
                      open = false
                      }
                  }">
-                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="contentClasses">
+                <div class="rounded-md ring-1 ring-black ring-opacity-5" :class="[contentClasses,colors.active]">
                     <slot name="content"/>
                 </div>
             </div>

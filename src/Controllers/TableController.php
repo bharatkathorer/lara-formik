@@ -2,7 +2,7 @@
 
 namespace Kathore\LaraFormik\Controllers;
 
-use Kathore\LaraFormik\Table\Action\TableHelper;
+use Kathore\LaraFormik\Table\TableHelper;
 
 class TableController
 {

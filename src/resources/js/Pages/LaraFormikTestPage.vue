@@ -1,56 +1,58 @@
 <template>
-    <SideBarComponent v-model="form.switch" backdrop-class="bg-light-disable">
-    </SideBarComponent>
+    <Layout1>
+                <SideBarComponent v-model="form.switch" backdrop-class="bg-light-disable">
+                </SideBarComponent>
 
-    <div class="p-10">
-        <FormAction title="Add Users" class="grid grid-cols-2 gap-6"
-                    :loading="form.check"
-                    :disabled="form.check"
-                    @submit="()=>{
-                            form.check=true;
-                            console.log('sample')}">
+                <div class="mb-10">
+                    <FormAction :mode="mode" title="Add Users" class="grid grid-cols-2 gap-6"
+                                :loading="form.check"
+                                :disabled="form.check"
+                                @submit="()=>{
+                                form.check=true;
+                                console.log('sample')}">
+                        <FormInput class="col-span-full" textarea :mode="mode" v-model="form.name" label="Full name"/>
+                        <FormInput :mode="mode" v-model="form.password" label="Password" type="password"/>
+                        <FormMultiselect
+                            label="Select name"
+                            :options="options"
+                            label-key="label"
+                            mode="multiple"
+                            v-model="form.select"
+                        />
+                        <FormRadioGroup :mode="mode" :options="genderOptions" label="Gender" v-model="form.gender"/>
+                        <FormSwitch :mode="mode" class="col-span-2" name="Open Sidebar" required size="md"
+                                    v-model="form.switch"/>
+                        <FormSwitch :mode="mode" class="col-span-2" name="Open Modal" required size="md" v-model="form.modal"/>
+                        <FormCheckbox :mode="mode" v-model="form.check" name="Toggle submitting form "/>
 
-            <FormInput v-model="form.name" label="Full name"/>
-            <FormInput v-model="form.password" label="Password" type="password"/>
-            <FormMultiselect
-                label="Select name"
-                :options="options"
-                label-key="label"
-                mode="multiple"
-                v-model="form.select"
-            />
-            <FormRadioGroup :options="genderOptions" label="Gender" v-model="form.gender"/>
-            <FormSwitch class="col-span-2" name="Open Sidebar" required size="md" v-model="form.switch"/>
-            <FormSwitch class="col-span-2" name="Open Modal" required size="md" v-model="form.modal"/>
-            <FormCheckbox v-model="form.check" name="Toggle submitting form "/>
-        </FormAction>
-    </div>
-    <div class="px-10">
-        <TableComponent>
-            <template #action="{item}">
-                <ActionComponent
-                    edit-href="/"
-                    delete-href="/"
-                    view-href="/"
-                    :options="options"
-                    @dropdown-click="handleDropdown"
-                />
-            </template>
-        </TableComponent>
-    </div>
-    <div class="px-10 mt-4 ">
-        <TabComponent :options="tabs"></TabComponent>
-        <!--        <RichTextArea/>-->
-    </div>
-    <ModalComponent
-        title="sample"
-        body="Are you sure delete this item"
-        v-model="form.modal"
-        @submit="form.modal=false"
-    >
-        <FormInput v-model="form.name" label="Full name"/>
-    </ModalComponent>
-    <ToastNotification/>
+                    </FormAction>
+                </div>
+        <div>
+            <TableComponent :mode="mode">
+                <template #action="{item}">
+                    <ActionComponent
+                        edit-href="/"
+                        delete-href="/"
+                        view-href="/"
+                        :options="options"
+                        @dropdown-click="handleDropdown"
+                    />
+                </template>
+            </TableComponent>
+        </div>
+                <div class=" mt-4 ">
+                    <TabComponent :mode="mode" :options="tabs"></TabComponent>
+                    <!--        <RichTextArea/>-->
+                </div>
+        <ModalComponent
+            title="sample"
+            body="Are you sure delete this item"
+            v-model="form.modal"
+            @submit="form.modal=false"
+        >
+            <FormInput :mode="mode" v-model="form.name" label="Full name"/>
+        </ModalComponent>
+    </Layout1>
 </template>
 <script setup>
 import {useForm, usePage} from "@inertiajs/vue3";
@@ -63,14 +65,12 @@ import FormRadioGroup from "@/LaraFormik/Form/FormRadioGroup.vue";
 import FormCheckbox from "@/LaraFormik/Form/FormCheckbox.vue";
 import FormMultiselect from "@/LaraFormik/Form/FormMultiselect.vue";
 import FormSwitch from "@/LaraFormik/Form/FormSwitch.vue";
-import ToastNotification from "@/LaraFormik/Notification/ToastNotification.vue";
 import SideBarComponent from "@/LaraFormik/Other/SideBarComponent.vue";
 import TabComponent from "@/LaraFormik/Other/TabComponent.vue";
 import FormAction from "@/LaraFormik/Form/FormAction.vue";
-import TableFilter from "@/LaraFormik/Form/Table/TableFilter.vue";
-import ButtonComponent from "@/LaraFormik/Form/ButtonComponent.vue";
+import Layout1 from "@/LaraFormik/Layouts/LayoutComponent.vue";
 
-const users = computed(() => usePage().props.modelFilter.data);
+const users = computed(() => usePage().props.users);
 const form = useForm({
     name: '',
     gender: 'Female',
@@ -110,14 +110,6 @@ const handleDropdown = (item) => {
 const submitForm = () => {
     form.post(route('actions'));
 }
-const performBulkAction = (action) => {
-    axios.post('/api/table/user/bulk', {
-        action,
-        ids: [1, 2, 3, 4, 5],
-    })
-        .then((response) => {
-            alert(response.data.message);
 
-        });
-};
+const mode = "dark"
 </script>

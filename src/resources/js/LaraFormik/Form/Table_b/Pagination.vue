@@ -23,7 +23,7 @@
             <slot v-else name="rightDisable">
                 <div
                     class="ml-3 relative inline-flex cursor-pointer items-center px-4 py-2 border border-stroke
-                 text-sm font-medium rounded-r-md  bg-white " :class="[colors.disableButton]">
+                 text-sm font-medium rounded-r-md  bg-white "  :class="[colors.disableButton]">
                     Next
                 </div>
             </slot>
@@ -55,7 +55,7 @@
                     <div v-else
                          class="relative  inline-flex items-center px-3 py-1.5 rounded-l-md
                            border border-stroke  text-sm font-medium cursor-not-allowed
-                           transition-all ease-in-out duration-300" :class="[colors.disableButton]">
+                           transition-all ease-in-out duration-300"  :class="[colors.disableButton]">
                         <span class="sr-only">Next </span>
                         <ChevronLeftIcon class="h-5 w-5 "/>
                     </div>
@@ -82,7 +82,7 @@
                          class="relative  inline-flex items-center px-3 py-2
                            border border-stroke  text-sm font-medium
                          rounded-r-md  cursor-not-allowed
-                           transition-all ease-in-out duration-300" :class="[colors.disableButton]">
+                           transition-all ease-in-out duration-300"  :class="[colors.disableButton]">
                         <span class="sr-only">Next</span>
                         <ChevronLeftIcon class="h-5 w-5 rotate-180 "/>
                     </div>
@@ -97,7 +97,7 @@ import {router, useForm, usePage} from "@inertiajs/vue3";
 import {ChevronLeftIcon} from "@heroicons/vue/24/outline/index.js";
 import {makeParameter} from "@/LaraFormik/Form/utils.js";
 
-const actions = usePage().props?.modelFilter ?? {};
+const actions = usePage().props?.actions ?? {};
 const paginate = ref(false);
 
 const {mode, ...props} = defineProps({
@@ -232,59 +232,3 @@ const colors = computed(() => {
     }
 })
 </script>
-
-<!--<script setup>-->
-<!--import {computed, defineProps, onBeforeMount, ref} from "vue";-->
-<!--import {router, useForm, usePage} from "@inertiajs/vue3";-->
-<!--import {ChevronLeftIcon} from "@heroicons/vue/24/outline/index.js";-->
-<!--import {makeParameter} from "@/LaraFormik/Form/utils.js";-->
-<!--const actions = usePage().props?.modelFilter ?? {};-->
-<!--const paginate = ref(false);-->
-
-<!--const props = defineProps({-->
-<!--    options: {-->
-<!--        type: [Object, Array],-->
-<!--        default: []-->
-<!--    },-->
-<!--    params: {-->
-<!--        type: [Object, Array],-->
-<!--        default: {}-->
-<!--    },-->
-<!--    getPage: Boolean,-->
-<!--    isNumber: {-->
-<!--        type: Boolean,-->
-<!--        default: true-->
-<!--    },-->
-<!--    classes: String,-->
-<!--});-->
-
-<!--const pageLinks = computed(() => _items.value.links.filter(({label}) => label !== "&laquo; Previous" && label !== "Next &raquo;"));-->
-<!--const _items = computed(() => {-->
-<!--    return props.options;-->
-<!--});-->
-<!--onBeforeMount(() => {-->
-<!--    if (_items.value.data) {-->
-<!--        if (_items.value.data.length) {-->
-<!--            paginate.value = true-->
-<!--        }-->
-<!--    }-->
-<!--})-->
-<!--const emit = defineEmits(['changePage']);-->
-<!--const testForm = useForm({});-->
-
-<!--function redirectPage(url) {-->
-<!--    if (url !== null) {-->
-<!--        if (props.getPage) {-->
-<!--            let data = url.split("?page=");-->
-<!--            emit('changePage', data[1]);-->
-<!--        } else {-->
-
-<!--            testForm.get(`${url}${makeParameter(false, false, false)}`, {-->
-<!--                preserveState: actions.isPaginateSelect,-->
-<!--                preserveScroll:true-->
-<!--            });-->
-<!--            // router.get(url, props.params);-->
-<!--        }-->
-<!--    }-->
-<!--}-->
-<!--</script>-->
