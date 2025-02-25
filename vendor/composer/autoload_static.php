@@ -27,6 +27,7 @@ class ComposerStaticIniteca04c0a74386b12df2e9dbf01752bb0
         'c7a3c339e7e14b60e06a2d7fcce9476b' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Events/functions.php',
         'f0906e6318348a765ffb6eb24e0d0938' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Foundation/helpers.php',
         '58571171fd5812e6e447dce228f52f4d' => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Support/helpers.php',
+        '5a0a8a25e8e945a43cf064436f339916' => __DIR__ . '/../..' . '/src/helpers.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -100,6 +101,10 @@ class ComposerStaticIniteca04c0a74386b12df2e9dbf01752bb0
             'League\\CommonMark\\' => 18,
             'Laravel\\SerializableClosure\\' => 28,
         ),
+        'K' => 
+        array (
+            'Kathore\\LaraFormik\\' => 19,
+        ),
         'I' => 
         array (
             'Illuminate\\Support\\' => 19,
@@ -129,7 +134,6 @@ class ComposerStaticIniteca04c0a74386b12df2e9dbf01752bb0
         'B' => 
         array (
             'Brick\\Math\\' => 11,
-            'Bharat\\LaraFormik\\' => 18,
         ),
     );
 
@@ -306,6 +310,11 @@ class ComposerStaticIniteca04c0a74386b12df2e9dbf01752bb0
         array (
             0 => __DIR__ . '/..' . '/laravel/serializable-closure/src',
         ),
+        'Kathore\\LaraFormik\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
+            1 => __DIR__ . '/../..' . '/src',
+        ),
         'Illuminate\\Support\\' => 
         array (
             0 => __DIR__ . '/..' . '/laravel/framework/src/Illuminate/Macroable',
@@ -354,11 +363,6 @@ class ComposerStaticIniteca04c0a74386b12df2e9dbf01752bb0
         'Brick\\Math\\' => 
         array (
             0 => __DIR__ . '/..' . '/brick/math/src',
-        ),
-        'Bharat\\LaraFormik\\' => 
-        array (
-            0 => __DIR__ . '/../..' . '/src',
-            1 => __DIR__ . '/../..' . '/src',
         ),
     );
 
